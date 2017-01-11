@@ -15,6 +15,9 @@ who is my [personal tutor](role)?
 < your [personal tutor](role) is [Joe Bloggs](person)
 * provide_advisor
 
+< do you want their contact details?
+* prompt_contactDetails
+
 what's his [email](contactType)
 * request_contactDetails
 
