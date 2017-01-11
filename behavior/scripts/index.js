@@ -81,8 +81,10 @@ exports.handle = function (client) {
 
 			request.get(smoochAPI, function (error, response, body) {
 
-				console.log("smooch.io error:");
+				if (error) {
+					console.log("smooch.io error:");
 				console.log(error);
+				}
 				// console.log(response);
 				// console.log(util.inspect(JSON.parse(body), false, null));
 				console.log("smooch.io:");
@@ -115,7 +117,7 @@ exports.handle = function (client) {
 
 					client.addTextResponse("Ok, " + forename + ", I'll check on your " + role.value);
 
-					client.done();
+					// client.done();
 
 				}
 
