@@ -8,6 +8,14 @@ var smoochAPI = {
 	}
 };
 
+
+
+
+var people = {
+	"auth0|585591e8f44af90e9a63fe46": {
+		"advisor": "Mark Smith"
+	}
+};
 // 'use strict';
 exports.handle = function (client) {
 
@@ -135,9 +143,10 @@ exports.handle = function (client) {
 				};
 
 				client.addResponse("provide_advisor", data);
+				client.addResponse("prompt_contactdetails");
 
 				// callback();
-				client.done();
+				// client.done();
 
 			});
 
@@ -160,9 +169,7 @@ exports.handle = function (client) {
 
 
 			console.log("provideContactDetails.extractInfo");
-			// console.log(messagePart);
-
-			// var messagePart = client.getMessagePart();
+			console.log(client.getMessagePart());
 
 			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'contactType').value;
 
@@ -210,11 +217,13 @@ exports.handle = function (client) {
 			'*': handleEvent
 		},
 		classifications: {
-			'request_advisor': 'getAdvisor'
+			'request_advisor': 'getAdvisor',
+			'request_contactDetails': 'provideContactDetails'
 		},
 		streams: {
 			main: 'getAdvisor',
-			getAdvisor: [collectRole, provideAdvisor, provideContactDetails]
+			getAdvisor: [collectRole, provideAdvisor],
+			getContact: [provideContactDetails]
 		}
 	});
 
@@ -223,10 +232,3 @@ exports.handle = function (client) {
 
 
 
-
-
-var people = {
-	"auth0|585591e8f44af90e9a63fe46": {
-		"advisor": "Mark Smith"
-	}
-};
