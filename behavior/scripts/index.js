@@ -143,8 +143,8 @@ exports.handle = function (client) {
 				};
 
 				client.addResponse("provide_advisor", data);
-				client.addResponse("prompt_contactdetails");
-
+				client.addResponse("prompt_contactDetails");
+				client.done();
 				// callback();
 				// client.done();
 
@@ -155,14 +155,18 @@ exports.handle = function (client) {
 
 		}
 	});
+	
+	// requestContactDetails = client.createStep({});
 
 	provideContactDetails = client.createStep({
 
 		satisfied: function () {
 
 			// should check here to see if we have a person subject
-			return false;
-
+			
+			console.log("provideContactDetails.satisfield", Boolean(client.getConversationState().contactType));
+			return Boolean(client.getConversationState().contactType);
+			
 		},
 
 		extractInfo: function (messagePart) {
@@ -171,6 +175,7 @@ exports.handle = function (client) {
 			console.log("provideContactDetails.extractInfo");
 			console.log(client.getMessagePart());
 
+/*
 			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'contactType').value;
 
 			if (contactType === "email") {
@@ -181,9 +186,11 @@ exports.handle = function (client) {
 				var forename = messagePart.sender.first_name;
 
 				client.addTextResponse("Ok, " + forename + ", I'll your XXXX's " + contactType);
+				client.done();
 
 				// client.done();
 			}
+*/
 
 
 
@@ -192,6 +199,7 @@ exports.handle = function (client) {
 
 		prompt: function () {
 
+			console.log("provideContactDetails.prompt");
 			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'role').value;
 			client.addTextResponse("getting " + contactType + " details");
 
@@ -223,7 +231,7 @@ exports.handle = function (client) {
 		streams: {
 			main: 'getAdvisor',
 			getAdvisor: [collectRole, provideAdvisor],
-			getContact: [provideContactDetails]
+			provideContactDetails: [provideContactDetails]
 		}
 	});
 
