@@ -121,13 +121,24 @@ exports.handle = function (client) {
 		},
 
 
-		prompt: function (messagePart) {
+		prompt: function () {
 			// Need to provide weather
 			console.log("Return data to provide_advisor");
 			
-				getSmoochData(messagePart.sender.remote_id, function(clientData) {
+			var messagePart = client.getMessagePart();
+			
+			messagePart.sender.remote_id = messagePart.sender.remote_id || "aaff1b14c18fb2e2d8ebb1d5";
+			
+				getSmoochData(messagePart, function(clientData) {
 				
-				client.addTextResponse("I hope that you are " + clientData.forename + " (" + clientData.client_id + ")");
+				// client.addTextResponse("I hope that you are " + clientData.forename + " (" + clientData.client_id + ")");
+				
+				var advisor = people[clientData.client_id].advisor;
+				
+				var data = {role: client.getFirstEntityWithRole(client.getMessagePart(), 'role').value, person: advisor};
+				
+				client.addResponse("provide_advisor", data);
+				
 				// callback();
 			client.done();
 				
@@ -171,7 +182,7 @@ exports.handle = function (client) {
 
 
 
-var people = [{
-	"id": "auth0|5815cb10344073a30129f746",
-	"advisor": "Mark Smith"
-}];
+var people = {
+	"auth0|585591e8f44af90e9a63fe46": {
+	"advisor": "Mark Smith"}
+};
