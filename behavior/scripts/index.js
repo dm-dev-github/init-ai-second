@@ -63,12 +63,12 @@ exports.handle = function (client) {
 
 		},
 
-		extractInfo: function (callback) {
+		extractInfo(messagePart) {
 
 
 			console.log("collectRole.extractInfo");
 
-			var messagePart = client.getMessagePart();
+			// var messagePart = client.getMessagePart();
 
 
 
@@ -92,8 +92,8 @@ exports.handle = function (client) {
 
 			getSmoochData(messagePart.sender.remote_id, function(clientData) {
 				
-				clientAddTextResponse("I hope that you are " + clientData.forename + " (" + clientData.client_id + ")");
-				callback();
+				client.addTextResponse("I hope that you are " + clientData.forename + " (" + clientData.client_id + ")");
+				// next();
 				
 			});
 
