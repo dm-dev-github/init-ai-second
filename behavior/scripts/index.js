@@ -51,8 +51,6 @@ exports.handle = function (client) {
 
 
 	// was collect city
-	
-	
 	var collectRole = client.createStep({
 
 
@@ -63,15 +61,13 @@ exports.handle = function (client) {
 
 		},
 
-		extractInfo: function(messagePart) {
+		extractInfo: function (messagePart) {
 
 
 			console.log("collectRole.extractInfo");
 			console.log(messagePart);
 
 			// var messagePart = client.getMessagePart();
-
-
 
 			var role = client.getFirstEntityWithRole(client.getMessagePart(), 'role');
 
@@ -87,7 +83,6 @@ exports.handle = function (client) {
 				client.addTextResponse("Ok, " + forename + ", I'll check on your " + role.value);
 
 				// client.done();
-
 			}
 
 
@@ -124,30 +119,78 @@ exports.handle = function (client) {
 		prompt: function () {
 			// Need to provide weather
 			console.log("Return data to provide_advisor");
-			
+
 			var messagePart = client.getMessagePart();
-			
+
 			messagePart.sender.remote_id = messagePart.sender.remote_id || "aaff1b14c18fb2e2d8ebb1d5";
-			
-				getSmoochData(messagePart, function(clientData) {
-				
+
+			getSmoochData(messagePart, function (clientData) {
+
 				// client.addTextResponse("I hope that you are " + clientData.forename + " (" + clientData.client_id + ")");
-				
 				var advisor = people[clientData.client_id].advisor;
-				
-				var data = {role: client.getFirstEntityWithRole(client.getMessagePart(), 'role').value, person: advisor};
-				
+
+				var data = {
+					role: client.getFirstEntityWithRole(client.getMessagePart(), 'role').value,
+					person: advisor
+				};
+
 				client.addResponse("provide_advisor", data);
-				
+
 				// callback();
-			client.done();
-				
+				client.done();
+
 			});
 
-			
+
 
 
 		}
+	});
+
+	provideContactDetails = client.createStep({
+
+		satisfied: function () {
+
+			// should check here to see if we have a person subject
+			return false;
+
+		},
+
+		extractInfo: function (messagePart) {
+
+
+			console.log("provideContactDetails.extractInfo");
+			// console.log(messagePart);
+
+			// var messagePart = client.getMessagePart();
+
+			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'contactType').value;
+
+			if (contactType === "email") {
+				client.updateConversationState({
+					contactType: contactType,
+				});
+
+				var forename = messagePart.sender.first_name;
+
+				client.addTextResponse("Ok, " + forename + ", I'll your XXXX's " + contactType);
+
+				// client.done();
+			}
+
+
+
+		},
+
+
+		prompt: function () {
+
+			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'role').value;
+			client.addTextResponse("getting " + contactType + " details");
+
+		}
+
+
 	});
 
 
@@ -171,7 +214,7 @@ exports.handle = function (client) {
 		},
 		streams: {
 			main: 'getAdvisor',
-			getAdvisor: [collectRole, provideAdvisor]
+			getAdvisor: [collectRole, provideAdvisor, provideContactDetails]
 		}
 	});
 
@@ -184,5 +227,6 @@ exports.handle = function (client) {
 
 var people = {
 	"auth0|585591e8f44af90e9a63fe46": {
-	"advisor": "Mark Smith"}
+		"advisor": "Mark Smith"
+	}
 };
