@@ -112,7 +112,6 @@ exports.handle = function (client) {
 			client.addTextResponse("I'm not sure what's going on ... ");
 			client.addResponse('prompt_role');
 			// client.expect('provideAdvisor', ['clarify_role']);
-			client.done();
 		},
 
 	});
@@ -131,7 +130,7 @@ exports.handle = function (client) {
 			// Need to provide weather
 			console.log("Return data to provide_advisor");
 			
-			
+			client.done();
 
 
 		}
