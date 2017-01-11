@@ -104,7 +104,7 @@ exports.handle = function (client) {
 					}
 				});
 				
-				client.resetUser(initId);
+				// client.resetUser(initId);
 
 				var role = client.getFirstEntityWithRole(client.getMessagePart(), 'role');
 
