@@ -63,10 +63,11 @@ exports.handle = function (client) {
 
 		},
 
-		extractInfo(messagePart) {
+		extractInfo: function(messagePart) {
 
 
 			console.log("collectRole.extractInfo");
+			console.log(messagePart);
 
 			// var messagePart = client.getMessagePart();
 
@@ -90,12 +91,6 @@ exports.handle = function (client) {
 			}
 
 
-			getSmoochData(messagePart.sender.remote_id, function(clientData) {
-				
-				client.addTextResponse("I hope that you are " + clientData.forename + " (" + clientData.client_id + ")");
-				// next();
-				
-			});
 
 		},
 
@@ -126,11 +121,19 @@ exports.handle = function (client) {
 		},
 
 
-		prompt: function () {
+		prompt: function (messagePart) {
 			// Need to provide weather
 			console.log("Return data to provide_advisor");
 			
+				getSmoochData(messagePart.sender.remote_id, function(clientData) {
+				
+				client.addTextResponse("I hope that you are " + clientData.forename + " (" + clientData.client_id + ")");
+				// callback();
 			client.done();
+				
+			});
+
+			
 
 
 		}
