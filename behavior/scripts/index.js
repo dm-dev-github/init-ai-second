@@ -56,7 +56,7 @@ exports.handle = function (client) {
 
 		satisfied: function () {
 
-			console.log("collectRole.satisfield");
+			console.log("collectRole.satisfield", Boolean(client.getConversationState().requstedRole));
 			return Boolean(client.getConversationState().requstedRole);
 
 		},
@@ -64,68 +64,28 @@ exports.handle = function (client) {
 		extractInfo: function () {
 
 
+			console.log("collectRole.extractInfo");
+
 			var messagePart = client.getMessagePart();
 
-			console.log("1. init.ai");
-			console.log(JSON.stringify(messagePart));
 
 
-			var initId = messagePart.sender.id;
-			var smoochId = messagePart.sender.remote_id;
+			var role = client.getFirstEntityWithRole(client.getMessagePart(), 'role');
 
-			console.log(initId + " | " + smoochId);
+			console.log();
 
-
-			smoochAPI.url = 'https://api.smooch.io/v1/appusers/' + smoochId;
-			
-			console.log(smoochAPI);
-
-			request.get(smoochAPI, function (error, response, body) {
-
-				if (error) {
-					console.log("smooch.io error:");
-				console.log(error);
-				}
-				// console.log(response);
-				// console.log(util.inspect(JSON.parse(body), false, null));
-				console.log("smooch.io:");
-				body = JSON.parse(body);
-
-				console.log(body);
-
-				var forename = body.appUser.givenName;
-				var surname = body.appUser.surname;
-				var client_id = body.appUser.userId;
-
-				client.updateUser(initId, 'first_name', forename);
-
-				client.updateUser(initId, 'last_name', surname);
-
-				client.updateUser(initId, {
-					'metadata': {
-						'client_id': client_id
-					}
+			if (role) {
+				client.updateConversationState({
+					requstedRole: role,
 				});
-				
-				// client.resetUser(initId);
 
-				var role = client.getFirstEntityWithRole(client.getMessagePart(), 'role');
+				var forename = messagePart.sender.first_name;
 
-				if (role) {
-					client.updateConversationState({
-						requstedRole: role,
-					});
+				client.addTextResponse("Ok, " + forename + ", I'll check on your " + role.value);
 
-					client.addTextResponse("Ok, " + forename + ", I'll check on your " + role.value);
+				client.done();
 
-					// client.done();
-
-				}
-
-
-
-			});
-
+			}
 
 
 
@@ -164,38 +124,95 @@ exports.handle = function (client) {
 			// Need to provide weather
 			console.log("Return data to provide_advisor");
 
+			var messagePart = client.getMessagePart();
 
-			var tutorData = {
-				person: "Joe Bloggs",
-				role: client.getFirstEntityWithRole(client.getMessagePart(), 'role').value
-			};
+			console.log("1. init.ai");
+			console.log(JSON.stringify(messagePart));
 
-			var advisor = people.filter(function (person) {
 
-				var messagePart = client.getMessagePart();
-				
-				console.log("init.ai n2:");
-				console.log(JSON.stringify(messagePart));
-				
-				var client_id = messagePart.sender.metadata.client_id;
-				
-				if (person.id === client.getMessagePart().sender.metadata.client_id) {
+			var initId = messagePart.sender.id;
+			var smoochId = messagePart.sender.remote_id;
 
-					return person.advisor;
+			console.log(initId + " | " + smoochId);
 
+
+			smoochId = "aaff1b14c18fb2e2d8ebb1d5";
+
+			smoochAPI.url = 'https://api.smooch.io/v1/appusers/' + smoochId;
+
+			console.log(smoochAPI);
+
+			request.get(smoochAPI, function (error, response, body) {
+
+				if (error) {
+					console.log("smooch.io error:");
+					console.log(error);
 				}
+				// console.log(response);
+				// console.log(util.inspect(JSON.parse(body), false, null));
+				console.log("smooch.io:");
+				body = JSON.parse(body);
+
+				console.log(body);
+
+				var forename = body.appUser.givenName;
+				var surname = body.appUser.surname;
+				var client_id = body.appUser.properties.id;
+
+				client.updateUser(initId, 'first_name', forename);
+
+				client.updateUser(initId, 'last_name', surname);
+
+				client.updateUser(initId, {
+					'metadata': {
+						'client_id': client_id
+					}
+				}, function (error, response) {
+
+					console.log("updateUser -----------------------------------");
+					console.log(error);
+					console.log(result);
+					console.log("----------------------------------- updateUser");
+
+
+
+				});
+
+				// client.resetUser(initId);
+				var tutorData = {
+					person: "Joe Bloggs",
+					role: client.getFirstEntityWithRole(client.getMessagePart(), 'role').value
+				};
+
+				var advisor = people.filter(function (person) {
+
+					var messagePart = client.getMessagePart();
+
+					console.log("init.ai n2:");
+					console.log(JSON.stringify(messagePart));
+
+					var client_id = messagePart.sender.metadata.client_id;
+
+					if (person.id === client.getMessagePart().sender.metadata.client_id) {
+
+						return person.advisor;
+
+					}
+
+				});
+
+
+				client.addTextResponse("looded up advisor: " + advisor);
+
+				var users = client.getUsers();
+
+				console.log(JSON.stringify(users));
+
+				client.addResponse('provide_advisor', tutorData);
+				client.done();
+
 
 			});
-
-
-			client.addTextResponse("looded up advisor: " + advisor);
-
-			var users = client.getUsers();
-
-			console.log(JSON.stringify(users));
-
-			client.addResponse('provide_advisor', tutorData);
-			client.done();
 
 
 
@@ -224,8 +241,7 @@ exports.handle = function (client) {
 		},
 		streams: {
 			main: 'getAdvisor',
-			getAdvisor: [collectRole, provideAdvisor],
-			provideAdvisor: provideAdvisor
+			getAdvisor: [collectRole, provideAdvisor]
 		}
 	});
 
