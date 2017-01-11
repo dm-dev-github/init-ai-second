@@ -56,10 +56,9 @@ exports.handle = function (client) {
 
 		satisfied: function () {
 
-			console.log("collectRole / satisfied");
-
-
+			console.log("collectRole.satisfield");
 			return Boolean(client.getConversationState().requstedRole);
+
 		},
 
 		extractInfo: function () {
@@ -67,17 +66,19 @@ exports.handle = function (client) {
 
 			var messagePart = client.getMessagePart();
 
-			console.log("init.ai");
+			console.log("1. init.ai");
 			console.log(JSON.stringify(messagePart));
 
 
 			var initId = messagePart.sender.id;
 			var smoochId = messagePart.sender.remote_id;
 
-			client.addTextResponse(initId + " | " + smoochId);
+			console.log(initId + " | " + smoochId);
 
 
 			smoochAPI.url = 'https://api.smooch.io/v1/appusers/' + smoochId;
+			
+			console.log(smoochAPI);
 
 			request.get(smoochAPI, function (error, response, body) {
 
