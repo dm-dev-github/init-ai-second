@@ -230,8 +230,10 @@ exports.handle = function (client) {
 			var contacttype = client.getFirstEntityWithRole(client.getMessagePart(), 'contacttype').value;
 
 			client.addTextResponse("getting " + contacttype + " details");
+			
+			var client_id = client.getMessagePart().sender.metadata.client_id;
 
-			var contactvalue = people[clientData.client_id][contacttype];
+			var contactvalue = people[client_id][contacttype];
 
 
 		}
