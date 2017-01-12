@@ -14,6 +14,14 @@ module.exports = function getCurrentWeather(messagePart, callback) {
 
 			// smoochId = smoochId || "aaff1b14c18fb2e2d8ebb1d5";
 
+
+				clientData = {forename: "Kristin", surname: "Ferguson", client_id: "auth0|585591e8f44af90e9a63fe46"};
+				
+				
+				callback(clientData);
+
+/*
+
 			smoochAPI.url = 'https://api.smooch.io/v1/appusers/' + messagePart.sender.remote_id;
 			
 			// console.log(smoochAPI);
@@ -33,11 +41,15 @@ module.exports = function getCurrentWeather(messagePart, callback) {
 
 				var clientData = {forename: body.appUser.givenName, surname: body.appUser.surname, client_id: body.appUser.properties.id};
 				
+				clientData = {forename: "Kristin", surname: "Ferguson", client_id: "auth0|585591e8f44af90e9a63fe46"};
+				
+				
 				callback(clientData);
 
 				
 
 			});
+*/
 
 
 };
