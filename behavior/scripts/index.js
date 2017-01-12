@@ -66,7 +66,7 @@ exports.handle = function (client) {
 
 		satisfied: function () {
 			
-			client.updateConversationState({});
+			// client.updateConversationState({});
 
 
 			// if false runs prompt
@@ -210,7 +210,7 @@ exports.handle = function (client) {
 
 			console.log("provideContactDetails.prompt");
 			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'role').value;
-			client.addTextResponse("getting " + contactType + " details");
+			client.addTextResponse("1. getting " + contactType + " details");
 
 		}
 
@@ -235,7 +235,7 @@ exports.handle = function (client) {
 
 			var contacttype = client.getFirstEntityWithRole(client.getMessagePart(), 'contacttype').value;
 
-			client.addTextResponse("getting " + contacttype + " details");
+			// client.addTextResponse("getting " + contacttype + " details");
 
 			var client_id = "auth0|5815cb10344073a30129f746";
 
