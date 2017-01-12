@@ -251,7 +251,14 @@ exports.handle = function (client) {
 			
 			var data = {contacttype: contacttype, contactvalue: contactvalue};
 			
-			client.addResponse("provide_contactDetails", data);
+			console.log("-----------------------------------");
+			console.log(data);
+			console.log("-----------------------------------");
+			
+			
+			client.addResponse("provide_contactdetails", data);
+			
+			client.done();
 
 
 		}
@@ -289,6 +296,6 @@ exports.handle = function (client) {
 		}
 	});
 
-	client.done();
+	// client.done();
 
 };
