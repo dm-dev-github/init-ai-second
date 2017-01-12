@@ -213,7 +213,7 @@ exports.handle = function (client) {
 
 			console.log("provideContactDetails.prompt");
 			var contacttype = client.getFirstEntityWithRole(client.getMessagePart(), 'contacttype').value;
-			client.addTextResponse("1. getting " + contacttype + " details");
+			client.addTextResponse("don't know whose " + contacttype + " you want");
 			client.addResponse("provide_contactdetails");
 			client.done();
 
@@ -241,11 +241,11 @@ exports.handle = function (client) {
 			var contacttype = client.getFirstEntityWithRole(client.getMessagePart(), 'contacttype').value;
 
 			// client.addTextResponse("getting " + contacttype + " details");
-			var client_id = "auth0|5815cb10344073a30129f746";
+			var client_id = "auth0|585591e8f44af90e9a63fe46";
 
 			if (client.getMessagePart().sender.metadata) {
 
-				client_id = client.getMessagePart().sender.metadata.client_id || "auth0|5815cb10344073a30129f746";
+				client_id = client.getMessagePart().sender.metadata.client_id || "auth0|585591e8f44af90e9a63fe46";
 
 			}
 
@@ -276,15 +276,31 @@ exports.handle = function (client) {
 			});
 
 
-			// client.done();
 
+			// console.log("provideContactDetails2.prompt getConversationState()");
+
+			// console.log(client.getConversationState());
+			// client.done();
 
 		}
 	});
 
 
+	byeForNow = client.createStep({
 
+		satisfied: function () {
 
+			// should check if happy with provided data
+			return false;
+
+		},
+
+		prompt: function() {
+			
+			client.addTextResponse("bye for now");
+		}
+		
+		});
 
 	// for income events not from chat
 	var handleEvent = function (eventType, payload) {
@@ -309,8 +325,8 @@ exports.handle = function (client) {
 		},
 		streams: {
 			main: 'getAdvisor',
-			get_advisor: [collectRole, provideAdvisor, provideContactDetails, provideContactDetails2],
-			provide_contactdetails: [provideContactDetails, provideContactDetails2]
+			get_advisor: [collectRole, provideAdvisor],
+			provide_contactdetails: [provideContactDetails, provideContactDetails2, byeForNow]
 		}
 	});
 
