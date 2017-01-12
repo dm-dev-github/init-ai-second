@@ -227,7 +227,7 @@ exports.handle = function (client) {
 			console.log(client.getMessagePart());
 			console.log("-----------------------------------");
 
-			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'contacttype').value;
+			var contacttype = client.getFirstEntityWithRole(client.getMessagePart(), 'contacttype').value;
 
 			client.addTextResponse("getting " + contactType + " details");
 
