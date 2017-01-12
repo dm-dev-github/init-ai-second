@@ -20,10 +20,6 @@ var people = {
 exports.handle = function (client) {
 
 
-
-
-
-
 	// Create steps
 	var sayHello = client.createStep({
 		satisfied: function () {
@@ -64,6 +60,7 @@ exports.handle = function (client) {
 
 		satisfied: function () {
 
+			// if false runs prompt
 			console.log("collectRole.satisfield", Boolean(client.getConversationState().requstedRole));
 			return Boolean(client.getConversationState().requstedRole);
 
@@ -74,11 +71,10 @@ exports.handle = function (client) {
 
 			console.log("collectRole.extractInfo");
 			// console.log(messagePart);
-
 			// var messagePart = client.getMessagePart();
 			var role = client.getFirstEntityWithRole(client.getMessagePart(), 'role');
 
-			console.log();
+			console.log("role", role);
 
 			if (role) {
 				client.updateConversationState({
@@ -86,9 +82,8 @@ exports.handle = function (client) {
 				});
 
 				var forename = messagePart.sender.first_name;
-
-				client.addTextResponse("Ok, " + forename + ", I'll check on your " + role.value);
-
+				
+				// client.addTextResponse("Ok, " + forename + ", I'll check on your " + role.value);
 				// client.done();
 			}
 
@@ -118,7 +113,7 @@ exports.handle = function (client) {
 	var provideAdvisor = client.createStep({
 		satisfied: function () {
 
-			console.log("provideAdvisor / satisfied");
+			// if false run prompt
 			console.log("provideAdvisor.satisfield", Boolean(client.getConversationState().advisorSent));
 			return Boolean(client.getConversationState().advisorSent);
 		},
@@ -134,24 +129,30 @@ exports.handle = function (client) {
 
 			getSmoochData(messagePart, function (clientData) {
 
-				// client.addTextResponse("I hope that you are " + clientData.forename + " (" + clientData.client_id + ")");
+				client.addTextResponse("I hope that you are " + clientData.forename + " (" + clientData.client_id + ")");
+				
 				var advisor = people[clientData.client_id].advisor;
 
 				var data = {
 					role: client.getFirstEntityWithRole(client.getMessagePart(), 'role').value,
 					person: advisor
 				};
+				
+				console.log("-----------------------------------");
+				console.log(data);
+				console.log("-----------------------------------");
 
+				client.addResponse("provide_advisor", data);
+				
 				client.updateConversationState({
 					advisorSent: true
 				});
 
 
-				client.addResponse("provide_advisor", data);
 				// client.addResponse("provide_ContactDetails");
-				client.done();
-				// callback();
 				// client.done();
+				// callback();
+				client.done();
 			});
 
 
@@ -171,16 +172,15 @@ exports.handle = function (client) {
 
 		},
 
-		extractInfo: function (messagePart) {
+		extractInfo: function () {
 
 
 			console.log("provideContactDetails.extractInfo");
-			
+
 			console.log("1. getConversationState():");
 			console.log(client.getConversationState());
-			
-			// console.log(messagePart);
 
+			// console.log(messagePart);
 /*
 			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'contactType').value;
 
@@ -197,7 +197,7 @@ exports.handle = function (client) {
 				// client.done();
 			}
 */
-	client.done();
+			client.done();
 
 
 		},
@@ -213,6 +213,26 @@ exports.handle = function (client) {
 
 
 	});
+
+
+	provideContactDetails2 = client.createStep({
+
+		satisfied: function () {
+
+			// should check if happy with provided data
+			return false;
+
+		},
+		prompt: function () {
+
+			console.log("provideContactDetails2.prompt");
+			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'role').value;
+			client.addTextResponse("getting " + contactType + " details");
+
+
+		}
+	});
+
 
 
 	var handleEvent = function (eventType, payload) {
@@ -231,13 +251,13 @@ exports.handle = function (client) {
 			'*': handleEvent
 		},
 		classifications: {
-			'request_advisor': 'getAdvisor',
-			'request_contactDetails': 'provideContactDetails'
+			'request_advisor': 'get_advisor',
+			'request_contactDetails': 'provide_contactdetails'
 		},
 		streams: {
 			main: 'getAdvisor',
-			get_advisor: [collectRole, provideAdvisor],
-			provide_ContactDetails: [provideContactDetails]
+			get_advisor: [collectRole, provideAdvisor, provideContactDetails],
+			provide_contactdetails: [provideContactDetails]
 		}
 	});
 
