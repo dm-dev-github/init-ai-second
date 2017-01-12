@@ -20,6 +20,7 @@ var people = {
 // 'use strict';
 exports.handle = function (client) {
 
+/*
 
 	// Create steps
 	var sayHello = client.createStep({
@@ -52,6 +53,7 @@ exports.handle = function (client) {
 			client.done();
 		}
 	});
+*/
 
 
 
@@ -71,6 +73,11 @@ exports.handle = function (client) {
 
 
 			console.log("collectRole.extractInfo");
+
+			console.log("collectRole.extractInfo client.getConversationState()");
+			console.log(client.getConversationState());
+
+
 			// console.log(messagePart);
 			// var messagePart = client.getMessagePart();
 			var role = client.getFirstEntityWithRole(client.getMessagePart(), 'role');
@@ -83,7 +90,7 @@ exports.handle = function (client) {
 				});
 
 				var forename = messagePart.sender.first_name;
-				
+
 				// client.addTextResponse("Ok, " + forename + ", I'll check on your " + role.value);
 				// client.done();
 			}
@@ -104,6 +111,7 @@ exports.handle = function (client) {
 
 			client.addTextResponse("I'm not sure what's going on ... ");
 			client.addResponse('prompt_role');
+			// client.done();
 			// client.expect('provideAdvisor', ['clarify_role']);
 		},
 
@@ -115,7 +123,7 @@ exports.handle = function (client) {
 		satisfied: function () {
 
 			// if false run prompt
-			console.log("provideAdvisor.satisfield", Boolean(client.getConversationState().advisorSent));
+			console.log("provideAdvisor.satisfied", Boolean(client.getConversationState().advisorSent));
 			return Boolean(client.getConversationState().advisorSent);
 		},
 
@@ -126,33 +134,41 @@ exports.handle = function (client) {
 
 			var messagePart = client.getMessagePart();
 
+			console.log("-----------------------------------");
+			console.log("messagePart");
+			console.log(messagePart);
+			console.log("-----------------------------------");
+
+
 			messagePart.sender.remote_id = messagePart.sender.remote_id || "aaff1b14c18fb2e2d8ebb1d5";
 
 			getSmoochData(messagePart, function (clientData) {
 
-				client.addTextResponse("I hope that you are " + clientData.forename + " (" + clientData.client_id + ")");
-				
+				// client.addTextResponse("I hope that you are " + clientData.forename + " (" + clientData.client_id + ")");
 				var advisor = people[clientData.client_id].advisor;
+
+				client.updateUser(messagePart.sender.id, 'metadata', {
+					client_id: clientData.client_id
+
+				});
 
 				var data = {
 					role: client.getFirstEntityWithRole(client.getMessagePart(), 'role').value,
 					person: advisor
 				};
-				
+
 				console.log("-----------------------------------");
 				console.log(data);
 				console.log("-----------------------------------");
 
 				client.addResponse("provide_advisor", data);
-				
+
 				client.updateConversationState({
 					advisorSent: true
 				});
 
 
 				// client.addResponse("provide_ContactDetails");
-				// client.done();
-				// callback();
 				client.done();
 			});
 
@@ -173,33 +189,13 @@ exports.handle = function (client) {
 
 		},
 
-		extractInfo: function () {
+		extractInfo: function (messagePart) {
 
 
 			console.log("provideContactDetails.extractInfo");
-
+			console.log(messagePart);
 			console.log("1. getConversationState():");
 			console.log(client.getConversationState());
-
-			// console.log(messagePart);
-/*
-			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'contactType').value;
-
-			if (contactType === "email") {
-				client.updateConversationState({
-					contactType: contactType,
-				});
-
-				var forename = messagePart.sender.first_name;
-
-				client.addTextResponse("Ok, " + forename + ", I'll your XXXX's " + contactType);
-				client.done();
-
-				// client.done();
-			}
-*/
-			client.done();
-
 
 		},
 
@@ -227,8 +223,15 @@ exports.handle = function (client) {
 		prompt: function () {
 
 			console.log("provideContactDetails2.prompt");
-			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'role').value;
+			console.log("-----------------------------------");
+			console.log(client.getMessagePart());
+			console.log("-----------------------------------");
+
+			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'contacttype').value;
+
 			client.addTextResponse("getting " + contactType + " details");
+
+			var contactvalue = people[clientData.client_id][contacttype];
 
 
 		}
@@ -236,6 +239,9 @@ exports.handle = function (client) {
 
 
 
+
+
+	// for income events not from chat
 	var handleEvent = function (eventType, payload) {
 			client.addTextResponse('Received event of type: ' + eventType);
 
@@ -245,6 +251,7 @@ exports.handle = function (client) {
 
 			client.done();
 		};
+
 
 
 	client.runFlow({
@@ -257,10 +264,11 @@ exports.handle = function (client) {
 		},
 		streams: {
 			main: 'getAdvisor',
-			get_advisor: [collectRole, provideAdvisor, provideContactDetails],
+			get_advisor: [collectRole, provideAdvisor, provideContactDetails, provideContactDetails2],
 			provide_contactdetails: [provideContactDetails, provideContactDetails2]
 		}
 	});
 
+	client.done();
 
 };
