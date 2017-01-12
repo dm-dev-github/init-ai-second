@@ -21,6 +21,6 @@ who is my [personal tutor](role)?
 what's his [email](contacttype)?
 * request_contactdetails
 
-you can contact him by [email](contacttype) on [j.bloggs@example.com](contactvalue)
+< you can contact him by [email](contacttype) on [j.bloggs@example.com](contactvalue)
 * provide_contactdetails
 
