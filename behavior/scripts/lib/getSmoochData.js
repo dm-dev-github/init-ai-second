@@ -16,7 +16,7 @@ module.exports = function getCurrentWeather(messagePart, callback) {
 
 			smoochAPI.url = 'https://api.smooch.io/v1/appusers/' + messagePart.sender.remote_id;
 			
-			console.log(smoochAPI);
+			// console.log(smoochAPI);
 			
 			request.get(smoochAPI, function (error, response, body) {
 
