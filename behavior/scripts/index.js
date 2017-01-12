@@ -237,6 +237,8 @@ exports.handle = function (client) {
 			console.log("-----------------------------------");
 			console.log(client.getMessagePart());
 			console.log("-----------------------------------");
+			console.log(client.getConversationState());
+			console.log("-----------------------------------");
 
 			var contacttype = client.getFirstEntityWithRole(client.getMessagePart(), 'contacttype').value;
 
@@ -266,10 +268,8 @@ exports.handle = function (client) {
 			client.addResponse("provide_contactdetails", data);
 
 			var contactSent = [];
-			contactSent.push({
-				contacttype: contacttype,
-				contactvalue: contactvalue
-			});
+			
+			contactSent.push(data);
 
 			client.updateConversationState({
 				contactInfo: contactSent
@@ -277,7 +277,7 @@ exports.handle = function (client) {
 
 
 
-			// console.log("provideContactDetails2.prompt getConversationState()");
+			console.log("provideContactDetails2.prompt getConversationState()");
 
 			// console.log(client.getConversationState());
 			// client.done();
