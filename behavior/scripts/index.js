@@ -13,7 +13,8 @@ var smoochAPI = {
 
 var people = {
 	"auth0|585591e8f44af90e9a63fe46": {
-		"advisor": "Mark Smith"
+		"advisor": "Mark Smith",
+		"email": "m.smith@example.com"
 	}
 };
 // 'use strict';
@@ -252,12 +253,12 @@ exports.handle = function (client) {
 		},
 		classifications: {
 			'request_advisor': 'get_advisor',
-			'request_contactDetails': 'provide_contactdetails'
+			'request_contactdetails': 'provide_contactdetails'
 		},
 		streams: {
 			main: 'getAdvisor',
 			get_advisor: [collectRole, provideAdvisor, provideContactDetails],
-			provide_contactdetails: [provideContactDetails]
+			provide_contactdetails: [provideContactDetails, provideContactDetails2]
 		}
 	});
 
