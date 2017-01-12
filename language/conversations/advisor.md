@@ -16,19 +16,11 @@ who is my [personal tutor](role)?
 * provide_advisor
 
 < do you want their contact details?
-* prompt_contactDetails
+* prompt_contactdetails
 
 what's his [email](contacttype)?
-* request_contactDetails
+* request_contactdetails
 
 you can contact him by [email](contacttype) on [j.bloggs@example.com](contactvalue)
 * provide_contactdetails
 
-< what role do you want to know about?
-* prompt_role
-
-[personal tutor](role)
-* clarify_role
-
-[academic advisor](role)
-* clarify_role
