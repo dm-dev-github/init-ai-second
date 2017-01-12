@@ -15,6 +15,9 @@ var people = {
 	"auth0|585591e8f44af90e9a63fe46": {
 		"advisor": "Mark Smith",
 		"email": "m.smith@example.com"
+	}, "auth0|5815cb10344073a30129f746": {
+		"advisor": "Jo Bloggs",
+		"email": "j.bloggs@example.com"
 	}
 };
 // 'use strict';
@@ -230,10 +233,22 @@ exports.handle = function (client) {
 			var contacttype = client.getFirstEntityWithRole(client.getMessagePart(), 'contacttype').value;
 
 			client.addTextResponse("getting " + contacttype + " details");
-			
-			var client_id = client.getMessagePart().sender.metadata.client_id;
 
+			var client_id = "auth0|5815cb10344073a30129f746";
+
+			if (client.getMessagePart().sender.metadata) {
+
+				client_id = client.getMessagePart().sender.metadata.client_id || "auth0|5815cb10344073a30129f746";
+
+			}
+			
+			console.log(client_id);
+			
 			var contactvalue = people[client_id][contacttype];
+			
+			var data = {contacttype: contacttype, contactvalue: contactvalue};
+			
+			client.addResponse("provide_contactDetails", data);
 
 
 		}
