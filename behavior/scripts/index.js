@@ -65,6 +65,9 @@ exports.handle = function (client) {
 
 
 		satisfied: function () {
+			
+			client.updateConversationState({});
+
 
 			// if false runs prompt
 			console.log("collectRole.satisfield", Boolean(client.getConversationState().requstedRole));
@@ -242,7 +245,7 @@ exports.handle = function (client) {
 
 			}
 			
-			console.log(client_id);
+			console.log("client_id", client_id);
 			
 			var contactvalue = people[client_id][contacttype];
 			
