@@ -15,7 +15,8 @@ var people = {
 	"auth0|585591e8f44af90e9a63fe46": {
 		"advisor": "Mark Smith",
 		"email": "m.smith@example.com"
-	}, "auth0|5815cb10344073a30129f746": {
+	},
+	"auth0|5815cb10344073a30129f746": {
 		"advisor": "Jo Bloggs",
 		"email": "j.bloggs@example.com"
 	}
@@ -65,9 +66,13 @@ exports.handle = function (client) {
 
 
 		satisfied: function () {
-			
-			// client.updateConversationState({});
 
+			// client.updateConversationState({});
+			console.log("collectRole.extractInfo");
+
+			client.updateConversationState({
+				advisorSent: false,
+			});
 
 			// if false runs prompt
 			console.log("collectRole.satisfield", Boolean(client.getConversationState().requstedRole));
@@ -78,7 +83,6 @@ exports.handle = function (client) {
 		extractInfo: function (messagePart) {
 
 
-			console.log("collectRole.extractInfo");
 
 			console.log("collectRole.extractInfo client.getConversationState()");
 			console.log(client.getConversationState());
@@ -174,8 +178,7 @@ exports.handle = function (client) {
 				});
 
 
-				// client.addResponse("provide_ContactDetails");
-				client.done();
+				// client.done();
 			});
 
 
@@ -209,8 +212,10 @@ exports.handle = function (client) {
 		prompt: function () {
 
 			console.log("provideContactDetails.prompt");
-			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'role').value;
-			client.addTextResponse("1. getting " + contactType + " details");
+			var contacttype = client.getFirstEntityWithRole(client.getMessagePart(), 'contacttype').value;
+			client.addTextResponse("1. getting " + contacttype + " details");
+			client.addResponse("provide_contactdetails");
+			client.done();
 
 		}
 
@@ -236,7 +241,6 @@ exports.handle = function (client) {
 			var contacttype = client.getFirstEntityWithRole(client.getMessagePart(), 'contacttype').value;
 
 			// client.addTextResponse("getting " + contacttype + " details");
-
 			var client_id = "auth0|5815cb10344073a30129f746";
 
 			if (client.getMessagePart().sender.metadata) {
@@ -244,21 +248,35 @@ exports.handle = function (client) {
 				client_id = client.getMessagePart().sender.metadata.client_id || "auth0|5815cb10344073a30129f746";
 
 			}
-			
+
 			console.log("client_id", client_id);
-			
+
 			var contactvalue = people[client_id][contacttype];
-			
-			var data = {contacttype: contacttype, contactvalue: contactvalue};
-			
+
+			var data = {
+				contacttype: contacttype,
+				contactvalue: contactvalue
+			};
+
 			console.log("-----------------------------------");
 			console.log(data);
 			console.log("-----------------------------------");
-			
-			
+
+
 			client.addResponse("provide_contactdetails", data);
-			
-			client.done();
+
+			var contactSent = [];
+			contactSent.push({
+				contacttype: contacttype,
+				contactvalue: contactvalue
+			});
+
+			client.updateConversationState({
+				contactInfo: contactSent
+			});
+
+
+			// client.done();
 
 
 		}
@@ -296,6 +314,5 @@ exports.handle = function (client) {
 		}
 	});
 
-	// client.done();
-
+	client.done();
 };
