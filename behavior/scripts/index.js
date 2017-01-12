@@ -73,10 +73,9 @@ exports.handle = function (client) {
 
 
 			console.log("collectRole.extractInfo");
-			console.log(messagePart);
+			// console.log(messagePart);
 
 			// var messagePart = client.getMessagePart();
-
 			var role = client.getFirstEntityWithRole(client.getMessagePart(), 'role');
 
 			console.log();
@@ -120,7 +119,8 @@ exports.handle = function (client) {
 		satisfied: function () {
 
 			console.log("provideAdvisor / satisfied");
-			return false;
+			console.log("provideAdvisor.satisfield", Boolean(client.getConversationState().advisorSent));
+			return Boolean(client.getConversationState().advisorSent);
 		},
 
 
@@ -142,12 +142,16 @@ exports.handle = function (client) {
 					person: advisor
 				};
 
+				client.updateConversationState({
+					advisorSent: true
+				});
+
+
 				client.addResponse("provide_advisor", data);
-				client.addResponse("prompt_contactDetails");
+				// client.addResponse("provide_ContactDetails");
 				client.done();
 				// callback();
 				// client.done();
-
 			});
 
 
@@ -155,25 +159,27 @@ exports.handle = function (client) {
 
 		}
 	});
-	
-	// requestContactDetails = client.createStep({});
 
+	// requestContactDetails = client.createStep({});
 	provideContactDetails = client.createStep({
 
 		satisfied: function () {
 
 			// should check here to see if we have a person subject
-			
-			console.log("provideContactDetails.satisfield", Boolean(client.getConversationState().contactType));
-			return Boolean(client.getConversationState().contactType);
-			
+			console.log("provideContactDetails.satisfield", Boolean(client.getConversationState().advisorSent));
+			return Boolean(client.getConversationState().advisorSent);
+
 		},
 
 		extractInfo: function (messagePart) {
 
 
 			console.log("provideContactDetails.extractInfo");
-			console.log(client.getMessagePart());
+			
+			console.log("1. getConversationState():");
+			console.log(client.getConversationState());
+			
+			// console.log(messagePart);
 
 /*
 			var contactType = client.getFirstEntityWithRole(client.getMessagePart(), 'contactType').value;
@@ -191,7 +197,7 @@ exports.handle = function (client) {
 				// client.done();
 			}
 */
-
+	client.done();
 
 
 		},
@@ -230,13 +236,10 @@ exports.handle = function (client) {
 		},
 		streams: {
 			main: 'getAdvisor',
-			getAdvisor: [collectRole, provideAdvisor],
-			provideContactDetails: [provideContactDetails]
+			get_advisor: [collectRole, provideAdvisor],
+			provide_ContactDetails: [provideContactDetails]
 		}
 	});
 
 
 };
-
-
-
